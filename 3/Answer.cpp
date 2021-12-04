@@ -10,29 +10,42 @@ int main()
     int gammaRate;
     // least common bit from each index of all rows
     int epsilonRate;
+    // lineCount is the number of lines in the file
+    int lineCount;
     ifstream input("input.txt");
-    // 12 bits on each line
-    // want a vector with 12 vectors
-    vector<vector<string>> matrix;
 
+    vector<int> countOnes(12, 0);
     for (string line; getline(input, line);)
     {
-        vector<string> row(12);
-        for (int col; col < line.length(); col++)
+        lineCount += 1;
+        for (int col = 0; col < 12; col++)
         {
-            row.push_back(string(1, line[col]));
-            // cout << col << endl;
-            // array[row].push_back(col);
-            // cout << line[col] << endl;
-            // array[col].push_back(line[col]);
-            //     array[col][row] = line[col];
-            //     cout << line[col] << endl;
+            if (line[col] == '1')
+            {
+                countOnes[col] += 1;
+            }
         }
-        // cout << line << endl;
-        matrix.push_back(row);
+    }
+    std::cout << "lineCount: " << lineCount << std::endl;
+    string gammaString(12, '0');
+    string epsilonString(12, '1');
+
+    for (int num = 0; num < countOnes.size(); num++)
+    {
+        if (countOnes[num] > lineCount / 2)
+        {
+            // most common bit is 1
+            gammaString[num] = '1';
+            // least common bit is 0
+            epsilonString[num] = '0';
+        }
     }
 
-    // gamma is now mode(array[0]), mode(array[1]), ..., mode(array[11])
+    gammaRate = stoi(gammaString, nullptr, 2);
+    epsilonRate = stoi(epsilonString, nullptr, 2);
+    std::cout << "gammaRate: " << gammaRate << std::endl;
+    std::cout << "epsilonRate: " << epsilonRate << std::endl;
+    std::cout << "gammaRate x epsilonRate" << gammaRate * epsilonRate << std::endl;
 
-    return gammaRate * epsilonRate;
+    return 0;
 }

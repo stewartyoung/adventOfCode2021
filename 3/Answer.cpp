@@ -17,7 +17,30 @@ struct Bits
 };
 
 // getCountOfBits returns counts of 1 in bits file
-Bits getCountOfOneBits(string inputFile, int colsToGetCountFor);
+// Bits getCountOfOneBits(string inputFile, int colsToGetCountFor);
+Bits getCountOfOneBits(string inputFile, int *colsToGetCountFor)
+{
+    // lineCount is the number of lines in the file
+    int lineCount;
+    ifstream input(inputFile);
+
+    vector<int> countOnes(colsToGetCountFor[1], 0);
+    for (string line; getline(input, line);)
+    {
+        lineCount += 1;
+        for (int col = colsToGetCountFor[0]; col < colsToGetCountFor[1]; col++)
+        {
+            if (line[col] == '1')
+            {
+                countOnes[col] += 1;
+            }
+        }
+    }
+
+    Bits bits = {countOnes, lineCount};
+
+    return bits;
+}
 
 int main()
 {
@@ -25,9 +48,11 @@ int main()
     int gammaRate;
     // least common bit from each index of all rows
     int epsilonRate;
-    Bits bits = getCountOfOneBits("input.txt", 12);
+    int colsToGetCountFor[2] = {0, 12};
+    Bits bits = getCountOfOneBits("input.txt", colsToGetCountFor);
     vector<int> countOnes = bits.countOnes;
     int lineCount = bits.lineCount;
+    std::cout << "lineCount: " << lineCount << std::endl;
     string gammaString(12, '0');
     string epsilonString(12, '1');
 
@@ -49,28 +74,4 @@ int main()
     std::cout << "gammaRate x epsilonRate: " << gammaRate * epsilonRate << std::endl;
 
     return 0;
-}
-
-Bits getCountOfOneBits(string inputFile, int colsToGetCountFor)
-{
-    // lineCount is the number of lines in the file
-    int lineCount;
-    ifstream input("input.txt");
-
-    vector<int> countOnes(colsToGetCountFor, 0);
-    for (string line; getline(input, line);)
-    {
-        lineCount += 1;
-        for (int col = 0; col < colsToGetCountFor; col++)
-        {
-            if (line[col] == '1')
-            {
-                countOnes[col] += 1;
-            }
-        }
-    }
-
-    Bits bits = {countOnes, lineCount};
-
-    return bits;
 }

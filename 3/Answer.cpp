@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <stack>
 
 using namespace std;
 
@@ -42,17 +43,15 @@ Bits getCountOfOneBits(string inputFile, int *colsToGetCountFor)
     return bits;
 }
 
-int main()
+struct Rates
 {
-    // most common bit from each index of all lines
     int gammaRate;
-    // least common bit from each index of all rows
     int epsilonRate;
-    int colsToGetCountFor[2] = {0, 12};
-    Bits bits = getCountOfOneBits("input.txt", colsToGetCountFor);
-    vector<int> countOnes = bits.countOnes;
-    int lineCount = bits.lineCount;
-    std::cout << "lineCount: " << lineCount << std::endl;
+    int gammaXepsilon;
+};
+
+Rates getGammaAndEpsilonRates(vector<int> countOnes, int lineCount)
+{
     string gammaString(12, '0');
     string epsilonString(12, '1');
 
@@ -66,12 +65,36 @@ int main()
             epsilonString[num] = '0';
         }
     }
+    // most common bit from each index of all lines
+    int gammaRate = stoi(gammaString, nullptr, 2);
+    // least common bit from each index of all rows
+    int epsilonRate = stoi(epsilonString, nullptr, 2);
+    int gammaXepsilon = gammaRate * epsilonRate;
+    Rates rates = {
+        gammaRate,
+        epsilonRate,
+        gammaXepsilon};
 
-    gammaRate = stoi(gammaString, nullptr, 2);
-    epsilonRate = stoi(epsilonString, nullptr, 2);
-    std::cout << "gammaRate: " << gammaRate << std::endl;
-    std::cout << "epsilonRate: " << epsilonRate << std::endl;
-    std::cout << "gammaRate x epsilonRate: " << gammaRate * epsilonRate << std::endl;
+    return rates;
+}
+
+int main()
+{
+    // part i
+    int colsToGetCountFor[2] = {0, 12};
+    Bits bits = getCountOfOneBits("input.txt", colsToGetCountFor);
+    vector<int> countOnes = bits.countOnes;
+    int lineCount = bits.lineCount;
+    std::cout << "lineCount: " << lineCount << std::endl;
+    Rates rates = getGammaAndEpsilonRates(countOnes, lineCount);
+    std::cout << "gammaRate: " << rates.gammaRate << std::endl;
+    std::cout << "epsilonRate: " << rates.epsilonRate << std::endl;
+    std::cout << "gammaRate x epsilonRate: " << rates.gammaXepsilon << std::endl;
+
+    // part ii
+    // bitStack needs to be a stack of bit strings
+    stack<string> stack;
+    // while stack.size() != 1 remove from stack using countOnes
 
     return 0;
 }

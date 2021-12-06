@@ -4,29 +4,30 @@
 
 using namespace std;
 
+// main
+// getCountOfBits
+// find most common bit in indices
+// find least common bit in indices
+
+// bits structure that houses multiple returns from getCountOfBits
+struct Bits
+{
+    vector<int> countOnes;
+    int lineCount;
+};
+
+// getCountOfBits returns counts of 1 in bits file
+Bits getCountOfOneBits(string inputFile, int colsToGetCountFor);
+
 int main()
 {
     // most common bit from each index of all lines
     int gammaRate;
     // least common bit from each index of all rows
     int epsilonRate;
-    // lineCount is the number of lines in the file
-    int lineCount;
-    ifstream input("input.txt");
-
-    vector<int> countOnes(12, 0);
-    for (string line; getline(input, line);)
-    {
-        lineCount += 1;
-        for (int col = 0; col < 12; col++)
-        {
-            if (line[col] == '1')
-            {
-                countOnes[col] += 1;
-            }
-        }
-    }
-    std::cout << "lineCount: " << lineCount << std::endl;
+    Bits bits = getCountOfOneBits("input.txt", 12);
+    vector<int> countOnes = bits.countOnes;
+    int lineCount = bits.lineCount;
     string gammaString(12, '0');
     string epsilonString(12, '1');
 
@@ -45,7 +46,31 @@ int main()
     epsilonRate = stoi(epsilonString, nullptr, 2);
     std::cout << "gammaRate: " << gammaRate << std::endl;
     std::cout << "epsilonRate: " << epsilonRate << std::endl;
-    std::cout << "gammaRate x epsilonRate" << gammaRate * epsilonRate << std::endl;
+    std::cout << "gammaRate x epsilonRate: " << gammaRate * epsilonRate << std::endl;
 
     return 0;
+}
+
+Bits getCountOfOneBits(string inputFile, int colsToGetCountFor)
+{
+    // lineCount is the number of lines in the file
+    int lineCount;
+    ifstream input("input.txt");
+
+    vector<int> countOnes(colsToGetCountFor, 0);
+    for (string line; getline(input, line);)
+    {
+        lineCount += 1;
+        for (int col = 0; col < colsToGetCountFor; col++)
+        {
+            if (line[col] == '1')
+            {
+                countOnes[col] += 1;
+            }
+        }
+    }
+
+    Bits bits = {countOnes, lineCount};
+
+    return bits;
 }
